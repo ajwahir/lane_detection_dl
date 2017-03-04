@@ -64,8 +64,24 @@ for i in range(6):
     print(truth_patches.shape)
     # print T_patch.shape
 
-    # grass_index = np.where(truth_patches == 0)
-    # lane_index = np.where(truth_patches == 1)
+    grass_index = np.where(truth_patches == 0)
+    lane_index = np.where(truth_patches == 1)
+    
+    ra=np.random.random_integers(0,len(grass_index[0]),len(lane_index[0]))
+    grass_bal_data=Image_patch[grass_index[0][ra]]
+    lane_bal_data=Image_patch[lane_index[0]]
+    grass_lab=np.zeros(len(ra))
+    lane_lab=np.ones(len(ra))
+    
+    inter_data=np.append(grass_bal_data,lane_bal_data,axis=0)
+    inter_label=np.append(grass_lab,lane_lab,axis=0)
+
+    randomize = np.arange(len(inter_label))
+    np.random.shuffle(randomize)
+    inter_data = inter_data[randomize]
+    inter_label = inter_label[randomize]
+
+
     # print 'length : ', len(indexx[0])
 
     # indexx = indexx[0]
@@ -76,12 +92,13 @@ for i in range(6):
     # grass = Image_patch[grass_index,:]
     # lane = Image_patch[lane_index,:]
 
+
     if i == 0:
-        data = Image_patch
-        label = truth_patches
+        data = inter_data
+        label = inter_label
     else:
-        data = np.append(data,Image_patch,axis=0)
-        label = np.append(label,truth_patches,axis=0)
+        data = np.append(data,inter_data,axis=0)
+        label = np.append(label,inter_label,axis=0)
 
 print(data.shape)
 print(label.shape)
@@ -89,5 +106,5 @@ print(label.shape)
 data = torch.fromNumpyArray(data)
 label = torch.fromNumpyArray(label)
 
-torch.save('/home/ipcv16/igvc/lane_detection/data/patches/train_data.t7', data)
-torch.save('/home/ipcv16/igvc/lane_detection/data/patches/train_label.t7', label)
+# torch.save('/home/ipcv16/igvc/lane_detection/data/patches/train_data.t7', data)
+# torch.save('/home/ipcv16/igvc/lane_detection/data/patches/train_label.t7', label)
